@@ -171,6 +171,7 @@ module.exports = grammar({
         [$._type_not_void],
         [$._type_not_void_not_function],
         [$.super_formal_parameter, $.unconditional_assignable_selector],
+        [$._postfix_expression, $.constant_pattern],
     ],
 
     word: $ => $.identifier,
@@ -969,7 +970,8 @@ module.exports = grammar({
                     $.selector
                 )
             ),
-            $.postfix_expression
+            $.postfix_expression,
+            $.static_member_shorthand,
         ),
 
         postfix_expression: $ => prec.right(choice(
@@ -982,7 +984,7 @@ module.exports = grammar({
                 repeat(
                     $.selector
                 )
-            )
+            ),
         )),
 
         postfix_operator: $ => $.increment_operator,
@@ -1057,6 +1059,13 @@ module.exports = grammar({
                 '.',
                 $.identifier
             )
+        ),
+        _dot_identifier_or_new: $ => prec.dynamic(
+          DART_PREC.DOT_IDENTIFIER,
+          seq(
+            '.',
+            $._identifier_or_new,
+          )
         ),
         const_object_expression: $ => seq(
             $.const_builtin,
@@ -1285,6 +1294,14 @@ module.exports = grammar({
 
         switch_expression_case: $ => seq($._guarded_pattern, '=>', $._expression),
 
+        static_member_shorthand: $ => prec.right(seq(
+          choice(
+            $._dot_identifier_or_new,
+            seq($.const_builtin, $._dot_identifier_or_new, $.arguments),
+          ),
+          repeat($.selector),
+        )),
+
         _guarded_pattern: $ => seq(
             $._pattern, optional(seq('when', $._expression))
         ),
@@ -1337,6 +1354,7 @@ module.exports = grammar({
             seq($.const_builtin, optional($.type_arguments), '[', commaSep1TrailingComma($._element), ']'),
             seq($.const_builtin, optional($.type_arguments), '{', commaSep1TrailingComma($._element), '}'),
             seq($.const_builtin, '(', $._expression, ')'),
+            $.static_member_shorthand,
         ),
 
         variable_pattern: $ => seq($._final_var_or_type, $.identifier),
@@ -1597,7 +1615,7 @@ module.exports = grammar({
         part_directive: $ => seq(
             optional($._metadata),
             'part',
-            $.uri,
+            $.configurable_uri,
             $._semicolon
         ),
 

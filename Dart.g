@@ -4,6 +4,68 @@
 
 // CHANGES:
 //
+// v0.58 Gather some occurrences of `AUGMENT` in a single location. Rename
+// `topLevelDefinition` to `topLevelDeclaration` (as in the specification).
+//
+// v0.57 Introduce augmentation related updates.
+//
+// v0.56 Update constructor declaration syntax to allow `constructorHead`.
+// Recatogerize 'factory' to be a reserved word and not a built-in identifier.
+//
+// v0.55 Use `typeWithParameters` consistently, simplify primary constructor
+// rule.
+//
+// v0.54 Simplify members.
+//
+// v0.53 Support declaring constructors.
+//
+// v0.52 Support static access shorthands.
+//
+// v0.51 Support a `switchExpression` with no cases.
+//
+// v0.50 Add support for digit separators in numeric literals.
+//
+// v0.49 Add support for static and top-level members with no implementation.
+//
+// v0.48 Add support for enhanced parts.
+//
+// v0.47 Make `augment` a built-in identifier (this happened in the feature
+// specification v1.10, but wasn't done here at the time).
+//
+// v0.46 Rename `libraryDefinition` to `libraryDeclaration`, as in the
+// language specification. Add support for libraries with imports.
+//
+// v0.45 Update rule about augmenting extension type declaration to omit
+// the primary constructor.
+//
+// v0.44 Support null-aware elements.
+//
+// v0.43 Change rule structure such that the association of metadata
+// with non-terminals can be explained in a simple and consistent way.
+// The derivable terms do not change. Remove `metadata` from the kind
+// of `forLoopParts` where the iteration variable is an existing variable
+// in scope (this is not implemented, is inconsistent anyway).
+//
+// v0.42 Support updated augmented `extensionDeclaration`.
+//
+// v0.41 Add missing `enumEntry` update for augmentations.
+//
+// v0.40 Include support for augmentation libraries.
+//
+// v0.39 Include latest changes to mixin related class modifiers.
+//
+// v0.38 Broaden `initializerExpression` to match implemented behavior.
+//
+// v0.37 Correct `libraryExport` to use `configurableUri`, not `uri`.
+//
+// v0.36 Update syntax from `inline class` to `extension type`, including
+// a special case of primary constructors.
+//
+// v0.35 Change named optional parameter syntax to require '=', that is,
+// remove the support for ':' as in `void f({int i: 1})`.
+//
+// v0.34 Add support for inline classes.
+//
 // v0.33 This commit does not change the derived language at all. It just
 // changes several rules to use the regexp-like grammar operators to simplify
 // onParts, recordLiteralNoConst, functionTypeTails, and functionType.
@@ -71,7 +133,7 @@
 // `builtinIdentifier` and `reservedWord`; update `typeAlias` to enable
 // non-function type aliases; add missing `metadata` to formal parameter
 // declarations; correct `symbolLiteral` to allow `VOID`;
-
+//
 // v0.12 (82403371ac00ddf004be60fa7b705474d2864509) Cf. language issue #1341:
 // correct `metadata`. Change `qualifiedName` such that it only includes the
 // cases with a '.'; the remaining case is added where `qualifiedName` is used.
@@ -129,18 +191,14 @@ import java.util.Stack;
 @parser::members {
   static String filePath = null;
   static boolean errorHasOccurred = false;
-
-  /// Must be invoked before the first error is reported for a library.
-  /// Will print the name of the library and indicate that it has errors.
-  static void prepareForErrors() {
-    errorHasOccurred = true;
-    System.err.println("Syntax error in " + filePath + ":");
-  }
+  static boolean errorHeaderHasBeenPrinted = false;
 
   /// Parse library, return true if success, false if errors occurred.
   public boolean parseLibrary(String filePath) throws RecognitionException {
     this.filePath = filePath;
-    errorHasOccurred = false;
+    errorHeaderHasBeenPrinted = false;
+    this.removeErrorListeners(); // Remove the default ConsoleErrorListener.
+    this.addErrorListener(new DartErrorListener()); // Add our custom one.
     startSymbol();
     return !errorHasOccurred;
   }
@@ -228,36 +286,37 @@ import java.util.Stack;
 // ---------------------------------------- Grammar rules.
 
 startSymbol
-    :    libraryDefinition
+    :    libraryDeclaration
     |    partDeclaration
     ;
 
-libraryDefinition
+libraryDeclaration
     :    FEFF? SCRIPT_TAG?
          libraryName?
          importOrExport*
          partDirective*
-         (metadata topLevelDefinition)*
+         (metadata topLevelDeclaration)*
          EOF
     ;
 
-topLevelDefinition
+topLevelDeclaration
     :    classDeclaration
     |    mixinDeclaration
+    |    extensionTypeDeclaration
     |    extensionDeclaration
     |    enumType
     |    typeAlias
-    |    EXTERNAL functionSignature ';'
-    |    EXTERNAL getterSignature ';'
-    |    EXTERNAL setterSignature ';'
-    |    EXTERNAL finalVarOrType identifierList ';'
-    |    getterSignature functionBody
-    |    setterSignature functionBody
-    |    functionSignature functionBody
-    |    (FINAL | CONST) type? staticFinalDeclarationList ';'
-    |    LATE FINAL type? initializedIdentifierList ';'
-    |    LATE? varOrType identifier ('=' expression)?
-         (',' initializedIdentifier)* ';'
+    |    AUGMENT? EXTERNAL functionSignature ';'
+    |    AUGMENT? EXTERNAL getterSignature ';'
+    |    AUGMENT? EXTERNAL setterSignature ';'
+    |    AUGMENT? EXTERNAL finalVarOrType identifierList ';'
+    |    AUGMENT? ABSTRACT finalVarOrType identifierList ';'
+    |    AUGMENT? getterSignature (functionBody | ';')
+    |    AUGMENT? setterSignature (functionBody | ';')
+    |    AUGMENT? functionSignature (functionBody | ';')
+    |    AUGMENT? (FINAL | CONST) type? initializedIdentifierList ';'
+    |    AUGMENT? LATE FINAL type? initializedIdentifierList ';'
+    |    AUGMENT? LATE? varOrType initializedIdentifierList ';'
     ;
 
 declaredIdentifier
@@ -350,13 +409,11 @@ functionFormalParameter
     ;
 
 simpleFormalParameter
-    :    declaredIdentifier
-    |    COVARIANT? identifier
+    :    COVARIANT? type? identifier
     ;
 
-// NB: It is an anomaly that VAR can be a return type (`var this.x()`).
 fieldFormalParameter
-    :    finalConstVarOrType? THIS '.' identifier (formalParameterPart '?'?)?
+    :    type? THIS '.' identifier (formalParameterPart '?'?)?
     ;
 
 superFormalParameter
@@ -368,7 +425,7 @@ defaultFormalParameter
     ;
 
 defaultNamedParameter
-    :    REQUIRED? normalFormalParameter ((':' | '=') expression)?
+    :    metadata REQUIRED? normalFormalParameterNoMetadata ('=' expression)?
     ;
 
 typeWithParameters
@@ -376,10 +433,29 @@ typeWithParameters
     ;
 
 classDeclaration
-    :    (classModifiers | mixinClassModifiers)
-         CLASS typeWithParameters superclass? interfaces?
-         LBRACE (metadata classMemberDeclaration)* RBRACE
-    |    classModifiers CLASS mixinApplicationClass
+    :    AUGMENT? (classModifiers | mixinClassModifiers)
+         CLASS classNameMaybePrimary superclass? interfaces?
+         memberedDeclarationBody
+    |    classModifiers MIXIN? CLASS mixinApplicationClass
+    ;
+
+primaryConstructor
+    :    CONST? typeWithParameters ('.' identifierOrNew)?
+         declaringParameterList
+    ;
+
+classNameMaybePrimary
+    :    primaryConstructor
+    |    typeWithParameters
+    ;
+
+memberedDeclarationBody
+    :    LBRACE memberDeclarations RBRACE
+    |    ';'
+    ;
+
+memberDeclarations
+    :    (metadata AUGMENT? memberDeclaration)*
     ;
 
 classModifiers
@@ -404,7 +480,7 @@ interfaces
     :    IMPLEMENTS typeNotVoidNotFunctionList
     ;
 
-classMemberDeclaration
+memberDeclaration
     :    methodSignature functionBody
     |    declaration ';'
     ;
@@ -414,31 +490,25 @@ mixinApplicationClass
     ;
 
 mixinDeclaration
-    :    mixinModifier? MIXIN typeIdentifier typeParameters?
+    :    BASE? MIXIN typeWithParameters
          (ON typeNotVoidNotFunctionList)? interfaces?
-         LBRACE (metadata mixinMemberDeclaration)* RBRACE
+         memberedDeclarationBody
+    |    AUGMENT BASE? MIXIN typeWithParameters interfaces?
+         memberedDeclarationBody
     ;
 
-mixinModifier
-    :    SEALED
-    |    BASE
-    |    INTERFACE
-    |    FINAL
-    ;
-
-// TODO: We might want to make this more strict.
-mixinMemberDeclaration
-    :    classMemberDeclaration
+extensionTypeDeclaration
+    :    EXTENSION TYPE primaryConstructor interfaces?
+         memberedDeclarationBody
+    |    AUGMENT EXTENSION TYPE typeWithParameters interfaces?
+         memberedDeclarationBody
     ;
 
 extensionDeclaration
-    :    EXTENSION identifier? typeParameters? ON type
-         LBRACE (metadata extensionMemberDefinition)* RBRACE
-    ;
-
-// TODO: We might want to make this more strict.
-extensionMemberDefinition
-    :    classMemberDeclaration
+    :    EXTENSION typeIdentifierNotType? typeParameters? ON type
+         memberedDeclarationBody
+    |    AUGMENT EXTENSION typeIdentifierNotType typeParameters?
+         memberedDeclarationBody
     ;
 
 methodSignature
@@ -449,19 +519,20 @@ methodSignature
     |    STATIC? setterSignature
     |    operatorSignature
     |    constructorSignature
+    |    primaryConstructorBodySignature
     ;
 
 declaration
-    :    EXTERNAL factoryConstructorSignature
+    :    EXTERNAL? factoryConstructorSignature
     |    EXTERNAL constantConstructorSignature
     |    EXTERNAL constructorSignature
-    |    (EXTERNAL STATIC?)? getterSignature
-    |    (EXTERNAL STATIC?)? setterSignature
-    |    (EXTERNAL STATIC?)? functionSignature
+    |    EXTERNAL? STATIC? getterSignature
+    |    EXTERNAL? STATIC? setterSignature
+    |    EXTERNAL? STATIC? functionSignature
     |    EXTERNAL (STATIC? finalVarOrType | COVARIANT varOrType) identifierList
-    |    ABSTRACT (finalVarOrType | COVARIANT varOrType) identifierList
     |    EXTERNAL? operatorSignature
-    |    STATIC (FINAL | CONST) type? staticFinalDeclarationList
+    |    ABSTRACT (finalVarOrType | COVARIANT varOrType) identifierList
+    |    STATIC (FINAL | CONST) type? initializedIdentifierList
     |    STATIC LATE FINAL type? initializedIdentifierList
     |    STATIC LATE? varOrType initializedIdentifierList
     |    COVARIANT LATE FINAL type? identifierList
@@ -470,14 +541,7 @@ declaration
     |    redirectingFactoryConstructorSignature
     |    constantConstructorSignature (redirection | initializers)?
     |    constructorSignature (redirection | initializers)?
-    ;
-
-staticFinalDeclarationList
-    :    staticFinalDeclaration (',' staticFinalDeclaration)*
-    ;
-
-staticFinalDeclaration
-    :    identifier '=' expression
+    |    primaryConstructorBodySignature
     ;
 
 operatorSignature
@@ -509,14 +573,82 @@ setterSignature
     ;
 
 constructorSignature
-    :    constructorName formalParameterList
+    :    constructorName formalParameterList // Old form.
+    |    constructorHead formalParameterList // New form.
+    ;
+
+declaringParameterList
+    :    '(' ')'
+    |    '(' declaringFormalParameters ','? ')'
+    |    '(' declaringFormalParameters ','
+         optionalOrNamedDeclaringFormalParameters ')'
+    |    '(' optionalOrNamedDeclaringFormalParameters ')'
+    ;
+
+declaringFormalParameters
+    :    declaringFormalParameter (',' declaringFormalParameter)*
+    ;
+
+declaringFormalParameter
+    :    metadata declaringFormalParameterNoMetadata
+    ;
+
+declaringFormalParameterNoMetadata
+    :    declaringFunctionFormalParameter
+    |    fieldFormalParameter
+    |    declaringSimpleFormalParameter
+    |    superFormalParameter
+    ;
+
+declaringFunctionFormalParameter
+    :    COVARIANT? (VAR | FINAL)? type?
+         identifier formalParameterPart '?'?
+    ;
+
+declaringSimpleFormalParameter
+    :    COVARIANT? (VAR | FINAL)? type? identifier
+    ;
+
+optionalOrNamedDeclaringFormalParameters
+    :    optionalPositionalDeclaringFormalParameters
+    |    namedDeclaringFormalParameters
+    ;
+
+optionalPositionalDeclaringFormalParameters
+    :    '[' defaultDeclaringFormalParameter
+         (',' defaultDeclaringFormalParameter)* ','? ']'
+    ;
+
+defaultDeclaringFormalParameter
+    :    declaringFormalParameter ('=' expression)?
+    ;
+
+namedDeclaringFormalParameters
+    :    LBRACE defaultDeclaringNamedParameter
+         (',' defaultDeclaringNamedParameter)* ','? RBRACE
+    ;
+
+defaultDeclaringNamedParameter
+    :    metadata REQUIRED? declaringFormalParameterNoMetadata
+         ('=' expression)?
     ;
 
 constructorName
     :    typeIdentifier ('.' identifierOrNew)?
     ;
 
-// TODO: Add this in the language specification, use it in grammar rules.
+constructorTwoPartName
+    :    typeIdentifier '.' identifierOrNew
+    ;
+
+constructorHead
+    :    NEW identifier?
+    ;
+
+factoryConstructorHead
+    :    FACTORY identifier?
+    ;
+
 identifierOrNew
     :    identifier
     |    NEW
@@ -542,21 +674,29 @@ fieldInitializer
     ;
 
 initializerExpression
-    :    conditionalExpression
+    :    throwExpression
+    |    assignableExpression assignmentOperator expression
+    |    conditionalExpression
     |    cascade
     ;
 
 factoryConstructorSignature
-    :    CONST? FACTORY constructorName formalParameterList
+    :    CONST? FACTORY constructorTwoPartName
+         formalParameterList // Old form.
+    |    CONST? factoryConstructorHead
+         formalParameterList // New form.
     ;
 
 redirectingFactoryConstructorSignature
-    :    CONST? FACTORY constructorName formalParameterList '='
-         constructorDesignation
+    :    factoryConstructorSignature '=' constructorDesignation
+    ;
+
+primaryConstructorBodySignature
+    :    THIS initializers?
     ;
 
 constantConstructorSignature
-    :    CONST constructorName formalParameterList
+    :    CONST constructorSignature
     ;
 
 mixinApplication
@@ -564,15 +704,19 @@ mixinApplication
     ;
 
 enumType
-    :    ENUM typeIdentifier typeParameters? mixins? interfaces? LBRACE
-         enumEntry (',' enumEntry)* (',')?
-         (';' (metadata classMemberDeclaration)*)?
-         RBRACE
+    :    AUGMENT? ENUM classNameMaybePrimary mixins? interfaces?
+         LBRACE enumBody? RBRACE
+    ;
+
+enumBody
+    :    enumEntry (',' enumEntry)* ','? (';' memberDeclarations)?
+    |    ';' memberDeclarations
     ;
 
 enumEntry
-    :    metadata identifier argumentPart?
-    |    metadata identifier typeArguments? '.' identifierOrNew arguments
+    :    metadata AUGMENT? identifier argumentPart?
+    |    metadata AUGMENT? identifier typeArguments?
+         '.' identifierOrNew arguments
     ;
 
 typeParameter
@@ -690,11 +834,22 @@ elements
     ;
 
 element
-    :    expressionElement
+    :    nullAwareExpressionElement
+    |    nullAwareMapElement
+    |    expressionElement
     |    mapElement
     |    spreadElement
     |    ifElement
     |    forElement
+    ;
+
+nullAwareExpressionElement
+    :    '?' expression
+    ;
+
+nullAwareMapElement
+    :    '?' expression ':' '?'? expression
+    |    expression ':' '?' expression
     ;
 
 expressionElement
@@ -723,11 +878,20 @@ constructorTearoff
 
 switchExpression
     :    SWITCH '(' expression ')'
-         LBRACE switchExpressionCase (',' switchExpressionCase)* ','? RBRACE
+         LBRACE (switchExpressionCase (',' switchExpressionCase)* ','?)? RBRACE
     ;
 
 switchExpressionCase
     :    guardedPattern '=>' expression
+    ;
+
+staticMemberShorthand
+    :    staticMemberShorthandHead selector*
+    ;
+
+staticMemberShorthandHead
+    :    '.' identifierOrNew
+    |    CONST '.' identifierOrNew arguments
     ;
 
 throwExpression
@@ -963,6 +1127,7 @@ awaitExpression
 postfixExpression
     :    assignableExpression postfixOperator
     |    primary selector*
+    |    staticMemberShorthand
     ;
 
 postfixOperator
@@ -1018,11 +1183,16 @@ qualifiedName
     |    typeIdentifier '.' typeIdentifier '.' identifierOrNew
     ;
 
-typeIdentifier
+typeIdentifierNotType
     :    IDENTIFIER
     |    DYNAMIC // Built-in identifier that can be used as a type.
-    |    otherIdentifier // Occur in grammar rules, are not built-in.
+    |    otherIdentifierNotType // Occur in grammar rules, are not built-in.
     |    { asyncEtcPredicate(getCurrentToken().getType()) }? (AWAIT|YIELD)
+    ;
+
+typeIdentifier
+    :    typeIdentifierNotType
+    |    TYPE
     ;
 
 typeTest
@@ -1099,6 +1269,7 @@ constantPattern
     |    CONST typeArguments? '[' elements? ']'
     |    CONST typeArguments? LBRACE elements? RBRACE
     |    CONST '(' expression ')'
+    |    staticMemberShorthand
     ;
 
 variablePattern
@@ -1152,11 +1323,11 @@ patternField
     ;
 
 objectPattern
-    :    typeName typeArguments? '(' patternFields? ')'
+    :    (typeName typeArguments? | typeNamedFunction) '(' patternFields? ')'
     ;
 
 patternVariableDeclaration
-    :    (FINAL | VAR) outerPattern '=' expression
+    :    outerPatternDeclarationPrefix '=' expression
     ;
 
 outerPattern
@@ -1165,6 +1336,10 @@ outerPattern
     |    mapPattern
     |    recordPattern
     |    objectPattern
+    ;
+
+outerPatternDeclarationPrefix
+    :    (FINAL | VAR) outerPattern
     ;
 
 patternAssignment
@@ -1234,12 +1409,15 @@ forStatement
     :    AWAIT? FOR '(' forLoopParts ')' statement
     ;
 
-// TODO: Include `metadata` in the pattern form?
 forLoopParts
-    :    metadata declaredIdentifier IN expression
-    |    metadata identifier IN expression
+    :    forInLoopPrefix IN expression
     |    forInitializerStatement expression? ';' expressionList?
-    |    metadata (FINAL | VAR) outerPattern IN expression
+    ;
+
+forInLoopPrefix
+    :    metadata declaredIdentifier
+    |    metadata outerPatternDeclarationPrefix
+    |    identifier
     ;
 
 // The localVariableDeclaration cannot be CONST, but that can
@@ -1328,7 +1506,12 @@ assertion
     ;
 
 libraryName
-    :    metadata LIBRARY dottedIdentifierList? ';'
+    :    metadata libraryNameBody ';'
+    ;
+
+libraryNameBody
+    :    LIBRARY dottedIdentifierList?
+    |    AUGMENT LIBRARY uri
     ;
 
 dottedIdentifierList
@@ -1337,6 +1520,7 @@ dottedIdentifierList
 
 importOrExport
     :    libraryImport
+    |    libraryAugmentImport
     |    libraryExport
     ;
 
@@ -1344,8 +1528,12 @@ libraryImport
     :    metadata importSpecification
     ;
 
+libraryAugmentImport
+    :    metadata IMPORT AUGMENT uri ';'
+    ;
+
 importSpecification
-    :    IMPORT configurableUri (DEFERRED? AS identifier)? combinator* ';'
+    :    IMPORT configurableUri (DEFERRED? AS typeIdentifier)? combinator* ';'
     ;
 
 combinator
@@ -1358,19 +1546,23 @@ identifierList
     ;
 
 libraryExport
-    :    metadata EXPORT uri combinator* ';'
+    :    metadata EXPORT configurableUri combinator* ';'
     ;
 
 partDirective
-    :    metadata PART uri ';'
+    :    metadata PART configurableUri ';'
     ;
 
 partHeader
-    :    metadata PART OF (dottedIdentifierList | uri)';'
+    :    metadata PART OF uri ';'
     ;
 
 partDeclaration
-    :    FEFF? partHeader (metadata topLevelDefinition)* EOF
+    :    FEFF? partHeader
+         importOrExport*
+         partDirective*
+         (metadata topLevelDeclaration)*
+         EOF
     ;
 
 uri
@@ -1406,9 +1598,13 @@ typeNotFunction
     |    VOID
     ;
 
+typeNamedFunction
+    :    (typeIdentifier '.')? FUNCTION
+    ;
+
 typeNotVoidNotFunction
     :    typeName typeArguments?
-    |    FUNCTION
+    |    typeNamedFunction
     ;
 
 typeName
@@ -1451,8 +1647,8 @@ typeNotVoidNotFunctionList
     ;
 
 typeAlias
-    :    TYPEDEF typeIdentifier typeParameters? '=' type ';'
-    |    TYPEDEF functionTypeAlias
+    :    AUGMENT? TYPEDEF typeWithParameters '=' type ';'
+    |    AUGMENT? TYPEDEF functionTypeAlias
     ;
 
 functionTypeAlias
@@ -1586,6 +1782,7 @@ reservedWord
 builtInIdentifier
     :    ABSTRACT
     |    AS
+    |    AUGMENT
     |    COVARIANT
     |    DEFERRED
     |    DYNAMIC
@@ -1609,7 +1806,7 @@ builtInIdentifier
     |    TYPEDEF
     ;
 
-otherIdentifier
+otherIdentifierNotType
     :    ASYNC
     |    BASE
     |    HIDE
@@ -1619,6 +1816,11 @@ otherIdentifier
     |    SHOW
     |    SYNC
     |    WHEN
+    ;
+
+otherIdentifier
+    :    otherIdentifierNotType
+    |    TYPE
     ;
 
 // ---------------------------------------- Lexer rules.
@@ -1636,7 +1838,12 @@ DIGIT
 
 fragment
 EXPONENT
-    :    ('e' | 'E') ('+' | '-')? DIGIT+
+    :    ('e' | 'E') ('+' | '-')? DIGITS
+    ;
+
+fragment
+DIGITS
+    :    DIGIT ('_'* DIGIT)*
     ;
 
 fragment
@@ -1644,6 +1851,11 @@ HEX_DIGIT
     :    ('a' | 'b' | 'c' | 'd' | 'e' | 'f')
     |    ('A' | 'B' | 'C' | 'D' | 'E' | 'F')
     |    DIGIT
+    ;
+
+fragment
+HEX_DIGITS
+    :    HEX_DIGIT ('_'* HEX_DIGIT)*
     ;
 
 // Reserved words (if updated, update `reservedWord` as well).
@@ -1790,6 +2002,10 @@ AS
     :    'as'
     ;
 
+AUGMENT
+    :    'augment'
+    ;
+
 COVARIANT
     :    'covariant'
     ;
@@ -1918,6 +2134,10 @@ SYNC
     :    'sync'
     ;
 
+TYPE
+    :    'type'
+    ;
+
 WHEN
     :    'when'
     ;
@@ -1925,14 +2145,13 @@ WHEN
 // Lexical tokens that are not words.
 
 NUMBER
-    :    DIGIT+ '.' DIGIT+ EXPONENT?
-    |    DIGIT+ EXPONENT?
-    |    '.' DIGIT+ EXPONENT?
+    :    DIGITS ('.' DIGITS)? EXPONENT?
+    |    '.' DIGITS EXPONENT?
     ;
 
 HEX_NUMBER
-    :    '0x' HEX_DIGIT+
-    |    '0X' HEX_DIGIT+
+    :    '0x' HEX_DIGITS
+    |    '0X' HEX_DIGITS
     ;
 
 RAW_SINGLE_LINE_STRING

@@ -3150,6 +3150,10 @@
         {
           "type": "SYMBOL",
           "name": "postfix_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "static_member_shorthand"
         }
       ]
     },
@@ -3406,6 +3410,23 @@
           {
             "type": "SYMBOL",
             "name": "identifier"
+          }
+        ]
+      }
+    },
+    "_dot_identifier_or_new": {
+      "type": "PREC_DYNAMIC",
+      "value": 19,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "."
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_identifier_or_new"
           }
         ]
       }
@@ -4424,6 +4445,48 @@
         }
       ]
     },
+    "static_member_shorthand": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_dot_identifier_or_new"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "const_builtin"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_dot_identifier_or_new"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "arguments"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "selector"
+            }
+          }
+        ]
+      }
+    },
     "_guarded_pattern": {
       "type": "SEQ",
       "members": [
@@ -4849,6 +4912,10 @@
               "value": ")"
             }
           ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "static_member_shorthand"
         }
       ]
     },
@@ -6621,7 +6688,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "uri"
+          "name": "configurable_uri"
         },
         {
           "type": "SYMBOL",
@@ -12604,6 +12671,10 @@
     [
       "super_formal_parameter",
       "unconditional_assignable_selector"
+    ],
+    [
+      "_postfix_expression",
+      "constant_pattern"
     ]
   ],
   "precedences": [],

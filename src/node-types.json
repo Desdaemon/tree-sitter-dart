@@ -221,6 +221,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -396,6 +400,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -616,6 +624,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -901,6 +913,10 @@
             "named": true
           },
           {
+            "type": "static_member_shorthand",
+            "named": true
+          },
+          {
             "type": "super",
             "named": true
           },
@@ -1105,6 +1121,10 @@
             "named": true
           },
           {
+            "type": "static_member_shorthand",
+            "named": true
+          },
+          {
             "type": "super",
             "named": true
           },
@@ -1182,6 +1202,10 @@
         },
         {
           "type": "selector",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -1336,6 +1360,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -1464,6 +1492,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -1584,6 +1616,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -1757,6 +1793,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -1972,6 +2012,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -2305,6 +2349,10 @@
             "named": true
           },
           {
+            "type": "static_member_shorthand",
+            "named": true
+          },
+          {
             "type": "super",
             "named": true
           },
@@ -2431,6 +2479,10 @@
             "named": true
           },
           {
+            "type": "static_member_shorthand",
+            "named": true
+          },
+          {
             "type": "super",
             "named": true
           },
@@ -2551,6 +2603,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -2837,6 +2893,10 @@
         },
         {
           "type": "spread_element",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -3404,6 +3464,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -3545,6 +3609,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -3884,6 +3952,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -4059,6 +4131,10 @@
             "named": true
           },
           {
+            "type": "static_member_shorthand",
+            "named": true
+          },
+          {
             "type": "super",
             "named": true
           },
@@ -4213,6 +4289,10 @@
             "named": true
           },
           {
+            "type": "static_member_shorthand",
+            "named": true
+          },
+          {
             "type": "super",
             "named": true
           },
@@ -4352,6 +4432,10 @@
           },
           {
             "type": "shift_expression",
+            "named": true
+          },
+          {
+            "type": "static_member_shorthand",
             "named": true
           },
           {
@@ -4503,6 +4587,10 @@
             "named": true
           },
           {
+            "type": "static_member_shorthand",
+            "named": true
+          },
+          {
             "type": "super",
             "named": true
           },
@@ -4638,6 +4726,10 @@
           },
           {
             "type": "shift_expression",
+            "named": true
+          },
+          {
+            "type": "static_member_shorthand",
             "named": true
           },
           {
@@ -4837,6 +4929,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -5126,6 +5222,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -5300,6 +5400,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -5629,6 +5733,10 @@
             "named": true
           },
           {
+            "type": "static_member_shorthand",
+            "named": true
+          },
+          {
             "type": "super",
             "named": true
           },
@@ -5780,6 +5888,10 @@
           },
           {
             "type": "spread_element",
+            "named": true
+          },
+          {
+            "type": "static_member_shorthand",
             "named": true
           },
           {
@@ -5970,6 +6082,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -6101,6 +6217,10 @@
             "named": true
           },
           {
+            "type": "static_member_shorthand",
+            "named": true
+          },
+          {
             "type": "super",
             "named": true
           },
@@ -6216,6 +6336,10 @@
           },
           {
             "type": "shift_expression",
+            "named": true
+          },
+          {
+            "type": "static_member_shorthand",
             "named": true
           },
           {
@@ -6428,6 +6552,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -6621,6 +6749,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -6766,6 +6898,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -6934,6 +7070,10 @@
           },
           {
             "type": "shift_expression",
+            "named": true
+          },
+          {
+            "type": "static_member_shorthand",
             "named": true
           },
           {
@@ -7340,6 +7480,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -7523,6 +7667,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -7700,6 +7848,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -7829,6 +7981,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -8021,6 +8177,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -8311,6 +8471,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -8448,6 +8612,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -8732,6 +8900,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -8904,6 +9076,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -9094,6 +9270,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -9303,6 +9483,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -9480,6 +9664,10 @@
             "named": true
           },
           {
+            "type": "static_member_shorthand",
+            "named": true
+          },
+          {
             "type": "super",
             "named": true
           },
@@ -9615,6 +9803,10 @@
           },
           {
             "type": "shift_expression",
+            "named": true
+          },
+          {
+            "type": "static_member_shorthand",
             "named": true
           },
           {
@@ -9781,6 +9973,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -9828,7 +10024,7 @@
           "named": true
         },
         {
-          "type": "uri",
+          "type": "configurable_uri",
           "named": true
         }
       ]
@@ -10015,6 +10211,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -10218,6 +10418,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -10576,6 +10780,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -10728,6 +10936,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -10903,6 +11115,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -11184,6 +11400,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -11428,6 +11648,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -11583,6 +11807,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -11816,6 +12044,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -12009,6 +12241,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -12150,6 +12386,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -12296,6 +12536,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -12340,6 +12584,33 @@
       "types": [
         {
           "type": "static_final_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "static_member_shorthand",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "arguments",
+          "named": true
+        },
+        {
+          "type": "const_builtin",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "selector",
           "named": true
         }
       ]
@@ -12681,6 +12952,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -12914,6 +13189,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -13099,6 +13378,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -13247,6 +13530,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -13375,6 +13662,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -13717,6 +14008,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -13921,6 +14216,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -14056,6 +14355,10 @@
         },
         {
           "type": "selector",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {
@@ -14320,6 +14623,10 @@
           "named": true
         },
         {
+          "type": "static_member_shorthand",
+          "named": true
+        },
+        {
           "type": "super",
           "named": true
         },
@@ -14460,6 +14767,10 @@
         },
         {
           "type": "shift_expression",
+          "named": true
+        },
+        {
+          "type": "static_member_shorthand",
           "named": true
         },
         {

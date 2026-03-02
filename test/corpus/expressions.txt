@@ -943,3 +943,102 @@ void main() {
           (decimal_integer_literal)))
       (expression_statement
         (identifier)))))
+
+========================
+static member shorthand
+========================
+
+main() {
+  var foo = .bar;
+  if (foo case .bar) {}
+  if (foo == .bar) {}
+  if (foo case == .bar) {}
+}
+
+---
+
+(program
+      (function_signature
+        (identifier)
+        (formal_parameter_list))
+      (function_body
+        (block
+          (local_variable_declaration
+            (initialized_variable_definition
+              (inferred_type)
+              (identifier)
+              (postfix_expression
+                (static_member_shorthand
+                  (identifier)))))
+          (if_statement
+            (identifier)
+            (constant_pattern
+              (static_member_shorthand
+                (identifier)))
+            (block))
+          (if_statement
+            (equality_expression
+              (identifier)
+              (equality_operator)
+              (postfix_expression
+                (static_member_shorthand
+                  (identifier))))
+            (block))
+          (if_statement
+            (identifier)
+            (equality_operator)
+            (postfix_expression
+              (static_member_shorthand
+                (identifier)))
+            (block)))))
+
+=====================================
+static constructor tearoff shorthand
+=====================================
+
+class Foo {}
+
+main() {
+  Foo foo = const .from<Bar>();
+  Foo bar = .new();
+  switch (bar) {
+    case .foo:
+    case .bar:
+  }
+}
+
+---
+
+
+======================================
+shorthand dot following question mark
+======================================
+
+var foo = {foo?.bar:baz};
+var bar = {foo? .bar:baz};
+
+---
+
+(program
+      (inferred_type)
+      (initialized_identifier_list
+        (initialized_identifier
+          (identifier)
+          (set_or_map_literal
+            (pair
+              (identifier)
+              (selector
+                (conditional_assignable_selector
+                  (identifier)))
+              (identifier)))))
+      (inferred_type)
+      (initialized_identifier_list
+        (initialized_identifier
+          (identifier)
+          (set_or_map_literal
+            (conditional_expression
+              (identifier)
+              (postfix_expression
+                (static_member_shorthand
+                  (identifier)))
+              (identifier))))))
